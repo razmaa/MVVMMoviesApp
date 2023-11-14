@@ -12,6 +12,7 @@ final class DetailsViewController: UIViewController {
     //MARK: - Properties
     private let mainStackView: UIStackView = {
         let stackView = UIStackView()
+        stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .vertical
         stackView.alignment = .center
         stackView.spacing = 6
@@ -193,29 +194,43 @@ final class DetailsViewController: UIViewController {
     }
     
     //MARK: - Configure
-    
-    func configure(with model: Movie){
-        title = model.name
-        ratingLabel.text = "\(model.rating) IMDB"
-        descriptionLabel.text = model.description
-        movieCertificateLabel.text = model.certificate
-        movieImageView.image = model.poster
-        movieRunTimeLabel.text = String(model.runtime)
-        movieReleaseLabel.text = String(model.release)
-        movieGenreLabel.text = model.genre
-        movieDirectorLabel.text = model.director
-        movieCastLabel.text = model.cast
-    }
-    
+//    
+//    func configure(with model: Movie){
+//        title = model.title
+//        ratingLabel.text = "\(model.imdbRating) IMDB"
+//        descriptionLabel.text = model.plot
+//        movieCertificateLabel.text = model.rated
+//        movieRunTimeLabel.text = model.runTime
+//        movieReleaseLabel.text = String(model.year)
+//        movieGenreLabel.text = model.genre
+//        movieDirectorLabel.text = model.director
+//        movieCastLabel.text = model.actors
+//        
+//        if let imageUrl = URL(string: model.poster) {
+//            URLSession.shared.dataTask(with: imageUrl) { data, _, error in
+//                if let error = error {
+//                    print("Error loading image: \(error.localizedDescription)")
+//                    return
+//                }
+//
+//                if let data = data {
+//                    DispatchQueue.main.async {
+//                        self.movieImageView.image = UIImage(data: data)
+//                    }
+//                }
+//            }.resume()
+//        }
+//    }
+//    
     //MARK: - Methods
-    func setupUI(){
+    private func setupUI(){
         navigationController?.navigationBar.titleTextAttributes = [ NSAttributedString.Key.foregroundColor : UIColor.white ]
         setupMainStackView()
         setupDescriptionStackView()
         setupConstraints()
     }
     
-    func setupMainStackView(){
+    private func setupMainStackView(){
         view.backgroundColor = UIColor(red: 31/255, green: 41/255, blue: 61/255, alpha: 0.7/1)
         view.addSubview(mainStackView)
         mainStackView.addArrangedSubview(movieImageView)
@@ -224,7 +239,7 @@ final class DetailsViewController: UIViewController {
         mainStackView.addArrangedSubview(selectButton)
     }
     
-    func setupDescriptionStackView() {
+    private func setupDescriptionStackView() {
         descriptionStackView.addArrangedSubview(descriptionLabel)
         
         descriptionStackView.addArrangedSubview(firstLineStackView)
@@ -253,13 +268,7 @@ final class DetailsViewController: UIViewController {
         
     }
     
-    func setupConstraints() {
-        mainStackView.translatesAutoresizingMaskIntoConstraints = false
-        descriptionStackView.translatesAutoresizingMaskIntoConstraints = false
-        ratingLabel.translatesAutoresizingMaskIntoConstraints = false
-        selectButton.translatesAutoresizingMaskIntoConstraints = false
-        movieImageView.translatesAutoresizingMaskIntoConstraints = false
-        
+    func setupConstraints() {        
         NSLayoutConstraint.activate([
             mainStackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             mainStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor),

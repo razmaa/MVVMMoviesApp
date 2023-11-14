@@ -19,8 +19,9 @@ final class MovieCell: UICollectionViewCell {
         stackView.axis = .vertical
         stackView.distribution = .fillProportionally
         stackView.alignment = .leading
-        stackView.spacing = 6
+        stackView.spacing = 4
         stackView.isLayoutMarginsRelativeArrangement = true
+        stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }()
     
@@ -28,12 +29,15 @@ final class MovieCell: UICollectionViewCell {
         let button = UIButton()
         button.setImage(UIImage(systemName: "suit.heart"), for: .normal)
         button.tintColor = .systemRed
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(likeButtonTapped), for: .touchUpInside)
         return button
     }()
     
     private let ratingLabel: UILabel = {
         let label = UILabel()
         label.textColor = .black
+        label.translatesAutoresizingMaskIntoConstraints = false
         label.backgroundColor = .systemGray3
         return label
     }()
@@ -77,13 +81,28 @@ final class MovieCell: UICollectionViewCell {
     
     //MARK: - Configure
     func configure(with model: Movie) {
-        isLiked = model.isFavorite
-        ratingLabel.text = String(model.rating)
-        movieTitleLabel.text = model.name
-        categoryLabel.text = model.genre
-        movieImageView.image = model.poster
+//        isLiked = model.isFavorite
+        movieTitleLabel.text = model.title
+        categoryLabel.text = model.type
+                
+        if let imageUrl = URL(string: model.poster) {
+            URLSession.shared.dataTask(with: imageUrl) { data, _, error in
+                if let error = error {
+                    print("Error loading image: \(error.localizedDescription)")
+                    return
+                }
+                
+                if let data = data {
+                    DispatchQueue.main.async {
+                        self.movieImageView.image = UIImage(data: data)
+                    }
+                } else {
+                    self.movieImageView.image = UIImage(named: "placeholderImage")
+                }
+            }.resume()
+        }
         
-        let heartImage = isLiked ? UIImage(systemName: "suit.heart.fill"): UIImage(systemName: "suit.heart")
+        let heartImage = isLiked ? UIImage(systemName: "suit.heart.fill") : UIImage(systemName: "suit.heart")
         likeButton.setImage(heartImage, for: .normal)
     }
     
@@ -104,7 +123,6 @@ final class MovieCell: UICollectionViewCell {
     }
     
     private func setUpConstraints() {
-        stackView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             stackView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
             stackView.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 16),
@@ -124,13 +142,10 @@ final class MovieCell: UICollectionViewCell {
     
     private func setupLikeButton() {
         contentView.addSubview(likeButton)
-        likeButton.translatesAutoresizingMaskIntoConstraints = false
-        likeButton.addTarget(self, action: #selector(likeButtonTapped), for: .touchUpInside)
     }
     
     private func setupRatingLabel() {
         contentView.addSubview(ratingLabel)
-        ratingLabel.translatesAutoresizingMaskIntoConstraints = false
     }
     
     @objc private func likeButtonTapped() {

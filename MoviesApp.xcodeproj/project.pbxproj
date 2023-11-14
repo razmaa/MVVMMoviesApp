@@ -12,7 +12,6 @@
 		157CD5C32AF517AB004F34B6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 157CD5C22AF517AB004F34B6 /* Assets.xcassets */; };
 		157CD5C62AF517AB004F34B6 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 157CD5C42AF517AB004F34B6 /* LaunchScreen.storyboard */; };
 		157CD5CF2AF518B1004F34B6 /* ListMoviesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 157CD5CE2AF518B1004F34B6 /* ListMoviesViewController.swift */; };
-		157CD5D22AF52589004F34B6 /* ListMoviesVC + CollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 157CD5D12AF52589004F34B6 /* ListMoviesVC + CollectionView.swift */; };
 		157CD5D52AF52608004F34B6 /* MovieCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 157CD5D42AF52608004F34B6 /* MovieCell.swift */; };
 		157CD5D82AF52899004F34B6 /* MovieModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 157CD5D72AF52899004F34B6 /* MovieModel.swift */; };
 		157CD5DA2AF54527004F34B6 /* DetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 157CD5D92AF54526004F34B6 /* DetailsViewController.swift */; };
@@ -26,7 +25,6 @@
 		157CD5C52AF517AB004F34B6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		157CD5C72AF517AB004F34B6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		157CD5CE2AF518B1004F34B6 /* ListMoviesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListMoviesViewController.swift; sourceTree = "<group>"; };
-		157CD5D12AF52589004F34B6 /* ListMoviesVC + CollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ListMoviesVC + CollectionView.swift"; sourceTree = "<group>"; };
 		157CD5D42AF52608004F34B6 /* MovieCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieCell.swift; sourceTree = "<group>"; };
 		157CD5D72AF52899004F34B6 /* MovieModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieModel.swift; sourceTree = "<group>"; };
 		157CD5D92AF54526004F34B6 /* DetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailsViewController.swift; sourceTree = "<group>"; };
@@ -86,7 +84,6 @@
 			isa = PBXGroup;
 			children = (
 				157CD5CE2AF518B1004F34B6 /* ListMoviesViewController.swift */,
-				157CD5D12AF52589004F34B6 /* ListMoviesVC + CollectionView.swift */,
 				157CD5D92AF54526004F34B6 /* DetailsViewController.swift */,
 			);
 			path = Scenes;
@@ -179,7 +176,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				157CD5D82AF52899004F34B6 /* MovieModel.swift in Sources */,
-				157CD5D22AF52589004F34B6 /* ListMoviesVC + CollectionView.swift in Sources */,
 				157CD5CF2AF518B1004F34B6 /* ListMoviesViewController.swift in Sources */,
 				157CD5BA2AF517A8004F34B6 /* AppDelegate.swift in Sources */,
 				157CD5DA2AF54527004F34B6 /* DetailsViewController.swift in Sources */,

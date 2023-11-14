@@ -7,7 +7,7 @@
 
 import UIKit
 
-class ListMoviesViewController: UIViewController {
+final class ListMoviesViewController: UIViewController {
     
     let backgroundColor = UIColor(red: 31/255, green: 41/255, blue: 61/255, alpha: 0.7/1)
     
@@ -35,23 +35,10 @@ class ListMoviesViewController: UIViewController {
         layout.scrollDirection = .vertical
         layout.minimumLineSpacing = 10
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collectionView.translatesAutoresizingMaskIntoConstraints = false
-        
         return collectionView
     }()
     
     private var profileButton = UIBarButtonItem()
-    
-    //MARK: - Data
-    var allMovies = [
-        Movie(name: "Batman", isFavorite: false, rating: 9.1, description: "When the Riddler, a sadistic serial killer, begins murdering key political figures in Gotham, Batman is forced to investigate the city's hidden corruption and question his family's involvement.", certificate: "16+", runtime: 2.56, release: 2022, genre: "Action", director: "Mat Reeves", cast: "Robert Pattinson, Zoë Kravitz, Jeffrey Wright, Colin Farrell, Paul Dano, John Turturro", poster: UIImage(named: "Batman_poster")!),
-        Movie(name: "Spider-man", isFavorite: false, rating: 10, description: "When the Riddler, a sadistic serial killer, begins murdering key political figures in Gotham, Batman is forced to investigate the city's hidden corruption and question his family's involvement.", certificate: "12+", runtime: 2.56, release: 2007, genre: "Action", director: "Mat Reeves", cast: "Robert Pattinson, Zoë Kravitz, Jeffrey Wright, Colin Farrell, Paul Dano, John Turturro", poster: UIImage(named: "Spider-man")!),
-        Movie(name: "Uncharted", isFavorite: false, rating: 9.0, description: "When the Riddler, a sadistic serial killer, begins murdering key political figures in Gotham, Batman is forced to investigate the city's hidden corruption and question his family's involvement.", certificate: "16+", runtime: 2.56, release: 2022, genre: "Action", director: "Mat Reeves", cast: "Robert Pattinson, Zoë Kravitz, Jeffrey Wright, Colin Farrell, Paul Dano, John Turturro", poster: UIImage(named: "Uncharted")!),
-        Movie(name: "Run, Forrest, run!", isFavorite: false, rating: 10, description: "When the Riddler, a sadistic serial killer, begins murdering key political figures in Gotham, Batman is forced to investigate the city's hidden corruption and question his family's involvement.", certificate: "16+", runtime: 2.56, release: 2022, genre: "Action", director: "Mat Reeves", cast: "Robert Pattinson, Zoë Kravitz, Jeffrey Wright, Colin Farrell, Paul Dano, John Turturro", poster: UIImage(named: "Forest_gump")!),
-        Movie(name: "Kukaracha", isFavorite: false, rating: 9.3, description: "When the Riddler, a sadistic serial killer, begins murdering key political figures in Gotham, Batman is forced to investigate the city's hidden corruption and question his family's involvement.", certificate: "16+", runtime: 2.56, release: 2022, genre: "Action", director: "Mat Reeves", cast: "Robert Pattinson, Zoë Kravitz, Jeffrey Wright, Colin Farrell, Paul Dano, John Turturro", poster: UIImage(named: "Kukaracha")!),
-        Movie(name: "Batman", isFavorite: false, rating: 9.1, description: "When the Riddler, a sadistic serial killer, begins murdering key political figures in Gotham, Batman is forced to investigate the city's hidden corruption and question his family's involvement.", certificate: "16+", runtime: 2.56, release: 2022, genre: "Action", director: "Mat Reeves", cast: "Robert Pattinson, Zoë Kravitz, Jeffrey Wright, Colin Farrell, Paul Dano, John Turturro", poster: UIImage(named: "Batman_poster")!)
-    ]
-    
     
     //MARK: - LifeCycle
     override func viewDidLoad() {
@@ -66,6 +53,7 @@ class ListMoviesViewController: UIViewController {
         setupStackView()
         setupHeaderLabel()
         setupCollectionView()
+        takeData()
     }
     
     private func setUpNavigationBar() {
@@ -88,9 +76,9 @@ class ListMoviesViewController: UIViewController {
         view.addSubview(mainStackView)
         NSLayoutConstraint.activate([
             mainStackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            mainStackView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            mainStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            mainStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+            mainStackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            mainStackView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            mainStackView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
         ])
         
     }
@@ -99,23 +87,93 @@ class ListMoviesViewController: UIViewController {
         headerLabel.frame = CGRect(x: 0, y: 0, width: 342, height: 29)
         headerLabel.font = UIFont.boldSystemFont(ofSize: 30)
         mainStackView.addArrangedSubview(headerLabel)
-        headerLabel.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            headerLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            headerLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
-        ])
     }
     
     private func setupCollectionView() {
         moviesCollectionView.backgroundColor = backgroundColor
-        moviesCollectionView.delegate = self
+ //       moviesCollectionView.delegate = self
         moviesCollectionView.dataSource = self
         moviesCollectionView.register(MovieCell.self, forCellWithReuseIdentifier: "MovieCell")
         mainStackView.addArrangedSubview(moviesCollectionView)
+    }
+    
+    private func takeData() {
+        guard let url = URL(string: "https://www.omdbapi.com/?i=tt3896198&apikey=e7ec0aa0") else { return }
         
-        NSLayoutConstraint.activate([
-            moviesCollectionView.leadingAnchor.constraint(equalTo: mainStackView.leadingAnchor, constant: 16),
-            moviesCollectionView.trailingAnchor.constraint(equalTo: mainStackView.trailingAnchor, constant: -16),
-        ])
+        URLSession.shared.dataTask(with: url) { data, _, error in
+            if let error = error {
+                print("Error fetching data: \(error.localizedDescription)")
+                return
+            }
+            
+            if let data = data {
+                do {
+                    let decoder = JSONDecoder()
+                    let result = try decoder.decode([Movie].self, from: data)
+                    
+                    DispatchQueue.main.async {
+                        self.updateCollectionView(with: result)
+                    }
+                }catch {
+                    print("Error decoding data: \(error.localizedDescription)")
+                    print("Failed data: \(String(data: data, encoding: .utf8) ?? "")")
+
+                }
+            }
+        }.resume()
+    }
+    
+    private func updateCollectionView(with data: [Movie]) {
+        allMovies = data
+        moviesCollectionView.reloadData()
+    }
+}
+
+
+// MARK: - CollectionView DataSource
+extension ListMoviesViewController: UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        allMovies.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "MovieCell", for: indexPath)
+        let selectedMovie = allMovies[indexPath.row]
+        if let movieCell = cell as? MovieCell {
+            movieCell.configure(with: selectedMovie)
+        }
+        
+        return cell
+    }
+}
+
+//MARK: - CollectionView Delegate
+//extension ListMoviesViewController: UICollectionViewDelegate {
+//    
+//    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+//        let selectedMovie = allMovies[indexPath.row]
+//        let detailsViewController = DetailsViewController()
+//        detailsViewController.configure(with: selectedMovie)
+//        navigationController?.pushViewController(detailsViewController, animated: true)
+//    }
+//    
+//}
+//
+//extension ListMoviesViewController: UICollectionViewDelegateFlowLayout {
+//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+//        let availableWidth = collectionView.bounds.width - 32
+//        let cellWidth = (availableWidth - 20) / 2
+//        let cellHeight: CGFloat = 278
+//        return CGSize(width: cellWidth, height: cellHeight)
+//    }
+//}
+
+
+//MARK: - MovieCell Delegate
+extension ListMoviesViewController: MovieCellDelegate {
+    
+    func didTapLikeButton(at index: Int) {
+        //allMovies[index].isFavorite.toggle()
+        allMovies.swapAt(index, 0)
     }
 }
