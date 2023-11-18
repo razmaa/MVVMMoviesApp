@@ -81,11 +81,19 @@ final class MovieCell: UICollectionViewCell {
     
     //MARK: - Configure
     func configure(with model: Movie) {
-//        isLiked = model.isFavorite
+        //        isLiked = model.isFavorite
         movieTitleLabel.text = model.title
         categoryLabel.text = model.type
-                
-        if let imageUrl = URL(string: model.poster) {
+        setIamge(url: model.poster)
+        
+        let heartImage = isLiked ? UIImage(systemName: "suit.heart.fill") : UIImage(systemName: "suit.heart")
+        likeButton.setImage(heartImage, for: .normal)
+    }
+    
+    //MARK: - Private methods
+    private func setIamge(url: String) {
+        
+        if let imageUrl = URL(string: url) {
             URLSession.shared.dataTask(with: imageUrl) { data, _, error in
                 if let error = error {
                     print("Error loading image: \(error.localizedDescription)")
@@ -101,12 +109,7 @@ final class MovieCell: UICollectionViewCell {
                 }
             }.resume()
         }
-        
-        let heartImage = isLiked ? UIImage(systemName: "suit.heart.fill") : UIImage(systemName: "suit.heart")
-        likeButton.setImage(heartImage, for: .normal)
     }
-    
-    //MARK: - Private methods
     
     private func setupUI() {
         setupStackView()
@@ -114,6 +117,7 @@ final class MovieCell: UICollectionViewCell {
         setupRatingLabel()
         setUpConstraints()
     }
+    
     private func setupStackView() {
         contentView.addSubview(stackView)
         

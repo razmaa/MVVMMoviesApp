@@ -186,48 +186,44 @@ final class DetailsViewController: UIViewController {
         return button
     }()
     
+    var viewModel = DetailsViewModel()
+    
     //MARK: - LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setupUI()
+        prepareDetails()
     }
     
-    //MARK: - Configure
-//    
-//    func configure(with model: Movie){
-//        title = model.title
-//        ratingLabel.text = "\(model.imdbRating) IMDB"
-//        descriptionLabel.text = model.plot
-//        movieCertificateLabel.text = model.rated
-//        movieRunTimeLabel.text = model.runTime
-//        movieReleaseLabel.text = String(model.year)
-//        movieGenreLabel.text = model.genre
-//        movieDirectorLabel.text = model.director
-//        movieCastLabel.text = model.actors
-//        
-//        if let imageUrl = URL(string: model.poster) {
-//            URLSession.shared.dataTask(with: imageUrl) { data, _, error in
-//                if let error = error {
-//                    print("Error loading image: \(error.localizedDescription)")
-//                    return
-//                }
-//
-//                if let data = data {
-//                    DispatchQueue.main.async {
-//                        self.movieImageView.image = UIImage(data: data)
-//                    }
-//                }
-//            }.resume()
-//        }
-//    }
-//    
     //MARK: - Methods
     private func setupUI(){
         navigationController?.navigationBar.titleTextAttributes = [ NSAttributedString.Key.foregroundColor : UIColor.white ]
         setupMainStackView()
         setupDescriptionStackView()
         setupConstraints()
+    }
+    
+    private func prepareDetails() {
+        if let selectedMovie = viewModel.selectedMovie {
+            
+            if let imageUrl = URL(string: selectedMovie.poster) {
+                URLSession.shared.dataTask(with: imageUrl) { data, _, error in
+                    if let error = error {
+                        print("Error loading image: \(error.localizedDescription)")
+                        return
+                    }
+                    
+                    if let data = data {
+                        DispatchQueue.main.async {
+                            self.movieImageView.image = UIImage(data: data)
+                        }
+                    } else {
+                        self.movieImageView.image = UIImage(named: "placeholderImage")
+                    }
+                }.resume()
+            }
+        }
     }
     
     private func setupMainStackView(){

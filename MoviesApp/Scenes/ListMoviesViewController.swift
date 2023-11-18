@@ -40,10 +40,13 @@ final class ListMoviesViewController: UIViewController {
     
     private var profileButton = UIBarButtonItem()
     
+    var viewModel = ListMoviesViewModel()
+    
     //MARK: - LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        fetchMovies()
     }
     
     //MARK: - Private methods
@@ -53,7 +56,15 @@ final class ListMoviesViewController: UIViewController {
         setupStackView()
         setupHeaderLabel()
         setupCollectionView()
-        takeData()
+    }
+    
+    private func fetchMovies() {
+        viewModel.fetchMovies { [weak self] in
+            DispatchQueue.main.async {
+                self?.moviesCollectionView.reloadData()
+            }
+            
+        }
     }
     
     private func setUpNavigationBar() {
@@ -91,42 +102,12 @@ final class ListMoviesViewController: UIViewController {
     
     private func setupCollectionView() {
         moviesCollectionView.backgroundColor = backgroundColor
- //       moviesCollectionView.delegate = self
+        moviesCollectionView.delegate = self
         moviesCollectionView.dataSource = self
         moviesCollectionView.register(MovieCell.self, forCellWithReuseIdentifier: "MovieCell")
         mainStackView.addArrangedSubview(moviesCollectionView)
     }
     
-    private func takeData() {
-        guard let url = URL(string: "https://www.omdbapi.com/?i=tt3896198&apikey=e7ec0aa0") else { return }
-        
-        URLSession.shared.dataTask(with: url) { data, _, error in
-            if let error = error {
-                print("Error fetching data: \(error.localizedDescription)")
-                return
-            }
-            
-            if let data = data {
-                do {
-                    let decoder = JSONDecoder()
-                    let result = try decoder.decode([Movie].self, from: data)
-                    
-                    DispatchQueue.main.async {
-                        self.updateCollectionView(with: result)
-                    }
-                }catch {
-                    print("Error decoding data: \(error.localizedDescription)")
-                    print("Failed data: \(String(data: data, encoding: .utf8) ?? "")")
-
-                }
-            }
-        }.resume()
-    }
-    
-    private func updateCollectionView(with data: [Movie]) {
-        allMovies = data
-        moviesCollectionView.reloadData()
-    }
 }
 
 
@@ -148,25 +129,24 @@ extension ListMoviesViewController: UICollectionViewDataSource {
 }
 
 //MARK: - CollectionView Delegate
-//extension ListMoviesViewController: UICollectionViewDelegate {
-//    
-//    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-//        let selectedMovie = allMovies[indexPath.row]
-//        let detailsViewController = DetailsViewController()
-//        detailsViewController.configure(with: selectedMovie)
-//        navigationController?.pushViewController(detailsViewController, animated: true)
-//    }
-//    
-//}
-//
-//extension ListMoviesViewController: UICollectionViewDelegateFlowLayout {
-//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-//        let availableWidth = collectionView.bounds.width - 32
-//        let cellWidth = (availableWidth - 20) / 2
-//        let cellHeight: CGFloat = 278
-//        return CGSize(width: cellWidth, height: cellHeight)
-//    }
-//}
+extension ListMoviesViewController: UICollectionViewDelegate {
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let selectedMovie = allMovies[indexPath.row].imdbID
+        let detailsViewController = DetailsViewController()
+        navigationController?.pushViewController(detailsViewController, animated: true)
+    }
+    
+}
+
+extension ListMoviesViewController: UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let availableWidth = collectionView.bounds.width - 32
+        let cellWidth = (availableWidth - 20) / 2
+        let cellHeight: CGFloat = 278
+        return CGSize(width: cellWidth, height: cellHeight)
+    }
+}
 
 
 //MARK: - MovieCell Delegate
